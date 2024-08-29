@@ -1,0 +1,51 @@
+<html>
+<head>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="http://js.leapmotion.com/0.2.2/leap.min.js"></script>
+ 
+ <script>
+  var position = 90;
+  $(document).ready(function() {
+    var ctl = new Leap.Controller({enableGestures: true});
+    //var swiper = ctl.gesture('swipe');
+    var normalizer = 1/400;
+	
+	
+
+/*
+    swiper.update(function(g) {
+      if (Math.abs(g.translation()[0]) > tolerance || Math.abs(g.translation()[1]) > tolerance) {
+        var xDir = Math.abs(g.translation()[0]) > tolerance ? (g.translation()[0] > 0 ? -1 : 1) : 0;
+        var yDir = Math.abs(g.translation()[1]) > tolerance ? (g.translation()[1] < 0 ? -1 : 1) : 0;
+		
+        //slider(xDir, yDir);
+		console.log(xDir, yDir);
+      }
+    });
+*/
+
+	ctl.loop(function(frame) {
+		if (frame.hands[0]) {
+			var delta = Math.round(frame.hands[0].palmVelocity[0] * normalizer);
+			position += delta;
+			if (position < 0) position = 0;
+			if (position > 180) position = 180;
+		}
+	});
+	
+    ctl.connect();
+	
+	setInterval(sendPosition, 50);
+  });
+  
+  
+	function sendPosition(){
+		if (position >= 0 || position <= 180) {
+			var request = new XMLHttpRequest();
+			request.open("GET","http://192.168.147.21/servo?p=" + position, true);
+			request.send();
+			console.log(position);
+		}
+	}
+  </script>

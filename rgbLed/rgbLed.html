@@ -1,0 +1,33 @@
+<script type="text/javascript" src="jscolor/jscolor.js"></script>
+
+
+<input class="color" id="colorInput">
+<input type="button" id="btnSend" value="GO!"/>
+
+<script>
+	document.getElementById('btnSend').onclick = function () {
+		var rgb = getNumbers();
+		sendRGB(rgb);
+	}
+	
+	function getNumbers() {
+		var color = document.getElementById('colorInput').color.rgb;
+		return {
+				r:Math.ceil(document.getElementById('colorInput').color.rgb[0]*9),
+				g:Math.ceil(document.getElementById('colorInput').color.rgb[1]*9),
+				b:Math.ceil(document.getElementById('colorInput').color.rgb[2]*9)
+			}
+	}
+	
+	function sendRGB(rgb){
+		sendColor("R", rgb.r);
+		sendColor("G", rgb.g);
+		sendColor("B", rgb.b);
+	}
+	
+	function sendColor(color, value){
+		var request = new XMLHttpRequest();
+		request.open("GET","http://192.168.147.21/rgb?" + color + "=" + value, true);
+		request.send();
+	}
+</script>

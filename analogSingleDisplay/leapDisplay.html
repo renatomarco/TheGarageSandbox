@@ -1,0 +1,54 @@
+<html>
+<head>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="http://js.leapmotion.com/0.2.2/leap.min.js"></script>
+ 
+ <script>
+  var number = 0;
+  var old_number = 0;
+  $(document).ready(function() {
+    var ctl = new Leap.Controller({enableGestures: true});
+    
+	ctl.loop(function(frame) {
+	    var hands = frame.hands.length;
+    	var fingers = frame.pointables.length;
+
+    	if (hands > 0) {
+    		number = fingers;
+    	} else {
+    		number = -1;
+    	}
+	});
+	
+    ctl.connect();
+	
+	setInterval(sendNumber, 500);
+  });
+  
+  
+	function sendNumber(){
+		if (number != old_number) {
+			var request = new XMLHttpRequest();
+			request.open("GET","http://192.168.147.19/display?p=" + number, true);
+			request.send();
+			console.log(number);
+			old_number = number;
+		}
+	}
+
+	function performSubmit() {
+		number = document.getElementById("n").value;
+		sendNumber();
+	}
+  </script>
+</head>
+
+<body>
+	<input type="text" id="n" />
+	<input type="button" onclick="performSubmit()" value="Go!" />
+
+</body>
+
+
+</html>
